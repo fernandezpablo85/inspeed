@@ -31,10 +31,17 @@ function _onConnectionsReady() {
 }
 
 function getConnections(callback) {
-  $.getJSON('connections.pablo.json', function(data) {
-    connections = data.connections;
-    callback();
-  });  
+  if (window._devMode) {
+    $.getJSON('connections.pablo.json', function(data) {
+      window.connections = data.connections;
+      callback();
+    });
+  } else {
+    IN.API.Connections('me').result(function (data){
+      window.connections = data.values;
+      callback();
+    });
+  }
 }
 
 function onSearchInput(text) {

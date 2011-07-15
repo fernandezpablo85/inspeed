@@ -31,3 +31,29 @@ h1 {
   top:20px;
   display:none;
 }
+
+#people {
+  width: 50%;
+  float: right;
+  clear: right;
+}
+
+#peopleList {
+  list-style: none;
+}
+
+.profileBox {
+  border: 1px solid LightGray;
+  margin: 4px;
+  min-height: 88px;
+}
+.profileBox .profilePicture {
+  width: 80px;
+  height: 80px;
+  margin: 4px;
+  float: left;
+  clear: left;
+}
+.profileBox .firstName,.lastName {
+  font-weight: bolder;
+}

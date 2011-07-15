@@ -38,12 +38,26 @@ function getConnections(callback) {
 }
 
 function onSearchInput(text) {
-  var filtered = _.select(connections, function(connection) {
-    var include = false;
-    if (connection.industry) {
-      include = connection.industry.substring(0, text.length) === text;
-    }
-    return include;
+  var people = _.select(connections, function(connection) {
+    return ((connection.firstName + " " + connection.lastName).toLowerCase().indexOf(text.toLowerCase()) >= 0);
   });
-  console.log(filtered);
+  drawPeoplePane(people);
+}
+
+function drawPeoplePane(people) {
+  console.log("drawPeoplePane("+people.length+" people)");
+  $('#peopleList').empty();
+  var template = "<li><div class='profileBox'>"
+			   + "  <a class='profileLink' href='<%= person.siteStandardProfileRequest.url %>'>"
+			   + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
+               + "    <span class='firstName'><%= person.firstName %></span>"
+               + "    <span class='lastName'><%= person.lastName %></span>"
+			   + "  </a><br />"
+			   + "  <span class='headline'><%= person.headline %></span><br />"
+			   + "  <span class='industry'><%= person.industry %></span><br />"
+               + "</div></li>";
+  $.each(people, function(idx, person) {
+    console.debug("drawPeoplePane: "+idx+" - '"+person.firstName+" "+person.lastName+"', ", person);
+    $('#peopleList').append( _.template(template, { person: person } ) );
+  });
 }

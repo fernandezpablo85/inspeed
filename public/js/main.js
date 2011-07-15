@@ -9,8 +9,11 @@ IN.Event.on(IN, 'systemReady', function() {
     });
   }
 
-  $('#input').keyup(function(event){
-    $(document).trigger('input:changed', [this.value]);
+  $('#input').keyup(function(event) {
+    // Ignore shift key (13) and do not fire if text.length is less than 2 characters.
+    if (event.keyCode != 13 && this.value.length >= 2) {
+      $(document).trigger('input:changed', [this.value]);
+    }
   });
 
   // Sample listener.
@@ -31,24 +34,35 @@ function _onConnectionsReady() {
 }
 
 function getConnections(callback) {
-  $.getJSON('connections.pablo.json', function(data) {
-    connections = data.connections;
-    callback();
-  });  
+  if (window._devMode) {
+    $.getJSON('connections.pablo.json', function(data) {
+      window.connections = data.connections;
+      callback();
+    });
+  } else {
+    var fs = ['location', 'firstName', 'lastName', 'industry', 'headline', 'pictureUrl', 'publicProfileUrl', 'threeCurrentPositions', 'educations'];
+    IN.API.Connections('me').fields(fs).result(function (data){
+      window.connections = data.values;
+      callback();
+    });
+  }
 }
 
-function onSearchInput(text) {
-  var people = _.select(connections, function(connection) {
-    return ((connection.firstName + " " + connection.lastName).toLowerCase().indexOf(text.toLowerCase()) >= 0);
-  });
-  drawPeoplePane(people);
+function makeItem (item, text) {
+  return "<li>"+item.replace(new RegExp("("+text+")",'gi'), "<span>$1</span>")+"</li>";
+}
+
+function createListItems (collection, text) {
+  return _.map(collection, function (item) {
+    return makeItem(item, text);
+  }).join("");
 }
 
 function drawPeoplePane(people) {
   console.log("drawPeoplePane("+people.length+" people)");
   $('#peopleList').empty();
   var template = "<li><div class='profileBox'>"
-			   + "  <a class='profileLink' href='<%= person.siteStandardProfileRequest.url %>'>"
+			   + "  <a class='profileLink' href='<%= person.publicProfileUrl %>'>"
 			   + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
                + "    <span class='firstName'><%= person.firstName %></span>"
                + "    <span class='lastName'><%= person.lastName %></span>"
@@ -61,3 +75,53 @@ function drawPeoplePane(people) {
     $('#peopleList').append( _.template(template, { person: person } ) );
   });
 }
+
+function onSearchInput(text) {
+  var people = _.select(connections, function(connection) {
+    return ((connection.firstName + " " + connection.lastName).toLowerCase().indexOf(text.toLowerCase()) >= 0);
+  });
+  drawPeoplePane(people);
+
+  var industries = getIndustries(connections, text);
+  var mkup = createListItems(industries, text);
+  $($('#industry ul')[0]).html(mkup);
+  var locations = getLocations(connections, text);
+  mkup = createListItems(locations, text);
+  $($('#location ul')[0]).html(mkup);
+}
+
+function getIndustries(connections, text) {
+  return _.uniq(_.pluck(filterByIndustry(connections,text),'industry'));
+}
+
+function getLocations(connections, text) {
+  return _.uniq(_.map(filterByLocation(connections,text), function(connection) {
+    return connection.location.name;
+  }));
+}
+
+function filterByIndustry(connections, text) {
+  var filtered = _.select(connections, function(connection) {
+    return contains(connection.industry, text);
+  });
+  return filtered;
+}
+
+function filterByLocation(connections, text) {
+  var filtered = _.select(connections, function(connection) {
+    if (connection.location) {
+      return contains(connection.location.name, text);
+    }
+    return false;
+  });
+  return filtered;
+}
+
+function contains(field, text) {
+  if (field) {
+    field = field.toLowerCase();
+    return field.indexOf(text.toLowerCase()) >= 0;
+  } 
+  return false;
+}
+

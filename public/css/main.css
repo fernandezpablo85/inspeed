@@ -5,3 +5,7 @@
   width:990px;
   font-size:2em;  
 }
+
+#li-login {
+  display:none;
+}

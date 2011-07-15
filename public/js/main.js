@@ -9,8 +9,11 @@ IN.Event.on(IN, 'systemReady', function() {
     });
   }
 
-  $('#input').keyup(function(event){
-    $(document).trigger('input:changed', [this.value]);
+  $('#input').keyup(function(event) {
+    // Ignore shift key (13).
+    if (event.keyCode != 13) {
+      $(document).trigger('input:changed', [this.value]);
+    }
   });
 
   // Sample listener.

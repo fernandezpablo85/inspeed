@@ -8,6 +8,15 @@ IN.Event.on(IN, 'systemReady', function() {
       IN.User.authorize(_onAuth);
     });
   }
+
+  $('#input').keyup(function(event){
+    $(document).trigger('input:changed', [this.value]);
+  });
+
+  // Sample listener.
+  $(document).bind('input:changed', function(event, text) {
+    console.log(text);
+  });
 });
 
 function _onAuth () {

@@ -10,8 +10,8 @@ IN.Event.on(IN, 'systemReady', function() {
   }
 
   $('#input').keyup(function(event) {
-    // Ignore shift key (13).
-    if (event.keyCode != 13) {
+    // Ignore shift key (13) and do not fire if text.length is less than 2 characters.
+    if (event.keyCode != 13 && this.value.length >= 2) {
       $(document).trigger('input:changed', [this.value]);
     }
   });

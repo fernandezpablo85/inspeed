@@ -77,9 +77,7 @@ function drawPeoplePane(people) {
 }
 
 function onSearchInput(text) {
-  var people = _.select(connections, function(connection) {
-    return ((connection.firstName + " " + connection.lastName).toLowerCase().indexOf(text.toLowerCase()) >= 0);
-  });
+  var people = getPeople(connections, text);
   drawPeoplePane(people);
 
   var industries = getIndustries(connections, text);
@@ -88,6 +86,12 @@ function onSearchInput(text) {
   var locations = getLocations(connections, text);
   mkup = createListItems(locations, text);
   $($('#location ul')[0]).html(mkup);
+}
+
+function getPeople(connections, text) {
+  return _.select(connections, function(connection) {
+    return contains(connection.firstName, text) || contains(connection.lastName, text);
+  });
 }
 
 function getIndustries(connections, text) {

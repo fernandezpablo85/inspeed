@@ -9,8 +9,11 @@ IN.Event.on(IN, 'systemReady', function() {
     });
   }
 
-  $('#input').keyup(function(event){
-    $(document).trigger('input:changed', [this.value]);
+  $('#input').keyup(function(event) {
+    // Ignore shift key (13) and do not fire if text.length is less than 2 characters.
+    if (event.keyCode != 13 && this.value.length >= 2) {
+      $(document).trigger('input:changed', [this.value]);
+    }
   });
 
   // Sample listener.
@@ -31,10 +34,18 @@ function _onConnectionsReady() {
 }
 
 function getConnections(callback) {
-  $.getJSON('connections.pablo.json', function(data) {
-    connections = data.connections;
-    callback();
-  });  
+  if (window._devMode) {
+    $.getJSON('connections.pablo.json', function(data) {
+      window.connections = data.connections;
+      callback();
+    });
+  } else {
+    var fs = ['location', 'firstName', 'lastName', 'industry', 'headline', 'pictureUrl', 'publicProfileUrl', 'threeCurrentPositions', 'educations'];
+    IN.API.Connections('me').fields(fs).result(function (data){
+      window.connections = data.values;
+      callback();
+    });
+  }
 }
 
 function onSearchInput(text) {

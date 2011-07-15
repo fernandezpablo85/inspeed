@@ -37,7 +37,8 @@ function getConnections(callback) {
       callback();
     });
   } else {
-    IN.API.Connections('me').result(function (data){
+    var fs = ['location', 'firstName', 'lastName', 'industry', 'headline', 'pictureUrl', 'publicProfileUrl', 'threeCurrentPositions', 'educations'];
+    IN.API.Connections('me').fields(fs).result(function (data){
       window.connections = data.values;
       callback();
     });

@@ -40,18 +40,37 @@ function getConnections(callback) {
 function onSearchInput(text) {
   var industries = _.uniq(_.pluck(filterByIndustry(connections, text), 'industry'));
   console.log(industries);
+  var locations = getLocations(filterByLocation(connections, text));
+  console.log(locations);
+}
+
+function getLocations(connections) {
+  return _.uniq(_.map(connections, function(connection) {
+    return connection.location.name;
+  }));
 }
 
 function filterByIndustry(connections, text) {
   var filtered = _.select(connections, function(connection) {
-    return startsWith(connection.industry, text);
+    return contains(connection.industry, text);
   });
   return filtered;
 }
 
-function startsWith(field, text) {
+function filterByLocation(connections, text) {
+  var filtered = _.select(connections, function(connection) {
+    if (connection.location) {
+      return contains(connection.location.name, text);
+    }
+    return false;
+  });
+  return filtered;
+}
+
+function contains(field, text) {
   if (field) {
-    return field.substring(0, text.length) === text;
+    field = field.toLowerCase();
+    return field.indexOf(text.toLowerCase()) >= 0;
   } 
   return false;
 }

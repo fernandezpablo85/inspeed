@@ -16,7 +16,29 @@ mark {
 }
 
 section.filter {
-  float:left;
+  width:350px;
+}
+
+#location ul {
+  list-style:none;
+}
+
+#location ul li {
+  border:1px solid gray;
+  padding:5px;
+  margin:5px 0px;
+  border-radius:15px;
+  background-color:#9AE69D;
+  cursor:pointer;
+  opacity:0.7;
+  transition: opacity .5s linear;
+  -webkit-transition: opacity .5s linear;
+}
+
+#location ul li:hover {
+  opacity:1;
+  transition: opacity .5s linear;
+  -webkit-transition: opacity .5s linear;
 }
 
 #logo {
@@ -28,9 +50,9 @@ section.filter {
   border: 1px solid #999;
   outline:0;
   height:45px;
-  width:990px;
+  width:750px;
   font-size:2em;
-  margin: 100px 0px 0px 0px;
+  margin: 15px 0px 0px 0px;
 }
 
 #li-login {

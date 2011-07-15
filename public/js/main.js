@@ -38,12 +38,20 @@ function getConnections(callback) {
 }
 
 function onSearchInput(text) {
+  var industries = _.uniq(_.pluck(filterByIndustry(connections, text), 'industry'));
+  console.log(industries);
+}
+
+function filterByIndustry(connections, text) {
   var filtered = _.select(connections, function(connection) {
-    var include = false;
-    if (connection.industry) {
-      include = connection.industry.substring(0, text.length) === text;
-    }
-    return include;
+    return startsWith(connection.industry, text);
   });
-  console.log(filtered);
+  return filtered;
+}
+
+function startsWith(field, text) {
+  if (field) {
+    return field.substring(0, text.length) === text;
+  } 
+  return false;
 }

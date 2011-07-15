@@ -49,7 +49,7 @@ function getConnections(callback) {
 }
 
 function makeItem (item, text) {
-  return "<li>"+item.replace(new RegExp("("+text+")",'gi'), "<span>$1</span>")+"</li>";
+  return "<li>"+item.replace(new RegExp("("+text+")",'gi'), "<mark>$1</mark>")+"</li>";
 }
 
 function createListItems (collection, text) {

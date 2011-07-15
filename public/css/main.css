@@ -11,8 +11,8 @@ h1 {
   font-size:3em;
 }
 
-ul li span {
-  color:red;
+mark {
+  background-color:yellow;
 }
 
 section.filter {

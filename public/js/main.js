@@ -16,7 +16,6 @@ IN.Event.on(IN, 'systemReady', function() {
     }
   });
 
-  // Sample listener.
   $(document).bind('input:changed', function(event, text) {
     onSearchInput(text);
   });
@@ -62,7 +61,7 @@ function drawPeoplePane(people) {
   console.log("drawPeoplePane("+people.length+" people)");
   $('#peopleList').empty();
   var template = "<li><div class='profileBox'>"
-			   + "  <a class='profileLink' href='<%= person.publicProfileUrl %>'>"
+			   + "  <a target='_blank' class='profileLink' href='<%= person.publicProfileUrl %>'>"
 			   + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
                + "    <span class='firstName'><%= person.firstName %></span>"
                + "    <span class='lastName'><%= person.lastName %></span>"
@@ -72,6 +71,9 @@ function drawPeoplePane(people) {
                + "</div></li>";
   $.each(people, function(idx, person) {
     console.debug("drawPeoplePane: "+idx+" - '"+person.firstName+" "+person.lastName+"', ", person);
+    if (!person.pictureUrl) {
+      person.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
+    }
     $('#peopleList').append( _.template(template, { person: person } ) );
   });
 }

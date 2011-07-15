@@ -11,6 +11,14 @@ h1 {
   font-size:3em;
 }
 
+ul li span {
+  color:red;
+}
+
+section.filter {
+  float:left;
+}
+
 #logo {
   float:left;
   margin:5px 20px 0px 0px;

@@ -48,15 +48,31 @@ function getConnections(callback) {
   }
 }
 
-function onSearchInput(text) {
-  var industries = _.uniq(_.pluck(filterByIndustry(connections, text), 'industry'));
-  console.log(industries);
-  var locations = getLocations(filterByLocation(connections, text));
-  console.log(locations);
+function makeItem (item, text) {
+  return "<li>"+item.replace(new RegExp("("+text+")",'gi'), "<span>$1</span>")+"</li>";
 }
 
-function getLocations(connections) {
-  return _.uniq(_.map(connections, function(connection) {
+function createListItems (collection, text) {
+  return _.map(collection, function (item) {
+    return makeItem(item, text);
+  }).join("");
+}
+
+function onSearchInput(text) {
+  var industries = getIndustries(connections, text);
+  var mkup = createListItems(industries, text);
+  $($('#industry ul')[0]).html(mkup);
+  var locations = getLocations(connections, text);
+  mkup = createListItems(locations, text);
+  $($('#location ul')[0]).html(mkup);
+}
+
+function getIndustries(connections, text) {
+  return _.uniq(_.pluck(filterByIndustry(connections,text),'industry'));
+}
+
+function getLocations(connections, text) {
+  return _.uniq(_.map(filterByLocation(connections,text), function(connection) {
     return connection.location.name;
   }));
 }

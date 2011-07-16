@@ -48,7 +48,11 @@ function getConnections(callback) {
 }
 
 function makeItem (item, text) {
-  return "<li>"+item.replace(new RegExp("("+text+")",'gi'), "<mark>$1</mark>")+"</li>";
+  return "<li>"+highlight(item, text)+"</li>";
+}
+
+function highlight (text, subtext) {
+  return text.replace(new RegExp("("+subtext+")",'gi'), "<mark>$1</mark>");
 }
 
 function createListItems (collection, text) {
@@ -57,7 +61,7 @@ function createListItems (collection, text) {
   }).join("");
 }
 
-function drawPeoplePane(people) {
+function drawPeoplePane(people, text) {
   console.log("drawPeoplePane("+people.length+" people)");
   $('#peopleList').empty();
   var template = "<li><div class='profileBox'>"
@@ -70,17 +74,18 @@ function drawPeoplePane(people) {
 			   + "  <span class='industry'><%= person.industry %></span><br />"
                + "</div></li>";
   $.each(people, function(idx, person) {
-    console.debug("drawPeoplePane: "+idx+" - '"+person.firstName+" "+person.lastName+"', ", person);
     if (!person.pictureUrl) {
       person.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
     }
+    person.firstName = highlight(person.firstName, text);
+    person.lastName = highlight(person.lastName, text);
     $('#peopleList').append( _.template(template, { person: person } ) );
   });
 }
 
 function onSearchInput(text) {
   var people = getPeople(connections, text);
-  drawPeoplePane(people);
+  drawPeoplePane(people, text);
 
   var industries = getIndustries(connections, text);
   var mkup = createListItems(industries, text);

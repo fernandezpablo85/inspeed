@@ -88,6 +88,12 @@ function onSearchInput(text) {
   var locations = getLocations(connections, text);
   mkup = createListItems(locations, text);
   $($('#location ul')[0]).html(mkup);
+  var companies = getCompanies(connections, text);
+  mkup = createListItems(companies, text);
+  $($('#company ul')[0]).html(mkup);
+  var educations = getEducations(connections, text);
+  mkup = createListItems(educations, text);
+  $($('#education ul')[0]).html(mkup);
 }
 
 function getPeople(connections, text) {
@@ -106,6 +112,28 @@ function getLocations(connections, text) {
   }));
 }
 
+function getCompanies(connections, text) {
+  return _.uniq(_.flatten(_.map(filterByCompany(connections,text), function(connection) {
+    var match = _.select(connection.threeCurrentPositions.values, function(position) {
+	  return contains(position.company.name, text);
+	});
+	return _.map(match, function(position) {
+	  return position.company.name;
+	});
+  })));
+}
+
+function getEducations(connections, text) {
+  return _.uniq(_.flatten(_.map(filterByEducation(connections,text), function(connection) {
+    var match = _.select(connection.educations.values, function(education) {
+	  return contains(education.schoolName, text);
+	});
+	return _.map(match, function(education) {
+	  return education.schoolName;
+	});
+  })));
+}
+
 function filterByIndustry(connections, text) {
   var filtered = _.select(connections, function(connection) {
     return contains(connection.industry, text);
@@ -119,6 +147,32 @@ function filterByLocation(connections, text) {
       return contains(connection.location.name, text);
     }
     return false;
+  });
+  return filtered;
+}
+
+function filterByCompany(connections, text) {
+  var filtered = _.select(connections, function(connection) {
+    if (connection.threeCurrentPositions) {
+	  var companyMatches = _.select(connection.threeCurrentPositions.values, function(position) {
+	    return contains(position.company.name, text);
+	  });
+      return companyMatches.length > 0;
+    }
+    return false;
+  });
+  return filtered;
+}
+
+function filterByEducation(connections, text) {
+  var filtered = _.select(connections, function(connection) {
+    if (connection.educations) {
+	  var educationsMatched = _.select(connection.educations.values, function(education) {
+	    return contains(education.schoolName, text);
+	  });
+	  return educationsMatched.length > 0;
+	}
+	return false;
   });
   return filtered;
 }

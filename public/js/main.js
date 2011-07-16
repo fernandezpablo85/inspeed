@@ -30,6 +30,7 @@ IN.Event.on(IN, 'systemReady', function() {
 
   $('body').delegate('.filter li', 'click', function(event){
     selectFilter(event.target);
+    drawPeoplePane(getPeople(connections, ''));
   });
 
   $(document).bind('input:changed', function(event, text) {
@@ -92,27 +93,28 @@ function createListItems (collection, text) {
 }
 
 function drawPeoplePane(people, text) {
-  console.log("drawPeoplePane("+people.length+" people)");
   $('#peopleList').empty();
   var template = "<li><div class='profileBox'>"
-			   + "  <a target='_blank' class='profileLink' href='<%= person.publicProfileUrl %>'>"
-			   + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
+               + "  <a target='_blank' class='profileLink' href='<%= person.publicProfileUrl %>'>"
+               + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
                + "    <span class='firstName'><%= person.firstName %></span>"
                + "    <span class='lastName'><%= person.lastName %></span>"
-			   + "  </a><br />"
-			   + "  <span class='headline'><%= person.headline %></span><br />"
-			   + "  <span class='industry'><%= person.industry %></span><br />"
+               + "  </a><br />"
+               + "  <span class='headline'><%= person.headline %></span><br />"
+               + "  <span class='industry'><%= person.industry %></span><br />"
                + "</div></li>";
   $.each(people, function(idx, person) {
-	
-	// Clone to avoid modifying the orginal object, so that changes only go to the template.
-	var personCopy = _.clone(person);
-    
+
+    // Clone to avoid modifying the orginal object, so that changes only go to the template.
+    var personCopy = _.clone(person);
+
     if (!personCopy.pictureUrl) {
       personCopy.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
     }
-    personCopy.firstName = highlight(personCopy.firstName, text);
-    personCopy.lastName = highlight(personCopy.lastName, text);
+    if (text && text.length > 1) {
+      personCopy.firstName = highlight(personCopy.firstName, text);
+      personCopy.lastName = highlight(personCopy.lastName, text);
+    }
     $('#peopleList').append( _.template(template, { person: personCopy } ) );
   });
 }
@@ -137,8 +139,44 @@ function onSearchInput(text) {
 
 function getPeople(connections, text) {
   return _.select(connections, function(connection) {
-    return contains(connection.firstName, text) || contains(connection.lastName, text);
+    
+    var companyMatches = matchCompany(connection.threeCurrentPositions, window.filters.company);
+    var educationMatches = matchEducation(connection.educations, window.filters.education);
+    var locationMatches = matchLocation(connection.location, window.filters.location);
+    var industryMatches = contains(connection.industry, window.filters.industry);
+    
+    var nameMatches = contains(connection.firstName, text) || contains(connection.lastName, text)
+    
+    return nameMatches && industryMatches && locationMatches && companyMatches && educationMatches;
   });
+}
+
+function matchCompany(company, filterValue) {
+  if (!filterValue) return true;
+  if (company) {
+    var matches = _.select(company.values, function(position) {
+      return contains(position.company.name, filterValue);
+    });
+    return matches.length > 0;
+  }
+  return false;
+}
+
+function matchEducation(education, filterValue) {
+  if (!filterValue) return true;
+
+  if (education) {
+    var matches = _.select(education.values, function(school) {
+      return contains(school.schoolName, filterValue);
+    });
+    return matches.length > 0;
+  }
+  return false;
+}
+
+function matchLocation(location, filterValue) {
+  if (!filterValue) return true;
+  return (location) ? contains(location.name, filterValue) : false;
 }
 
 function getIndustries(connections, text) {
@@ -154,22 +192,22 @@ function getLocations(connections, text) {
 function getCompanies(connections, text) {
   return _.uniq(_.flatten(_.map(filterByCompany(connections,text), function(connection) {
     var match = _.select(connection.threeCurrentPositions.values, function(position) {
-	  return contains(position.company.name, text);
-	});
-	return _.map(match, function(position) {
-	  return position.company.name;
-	});
+      return contains(position.company.name, text);
+    });
+    return _.map(match, function(position) {
+      return position.company.name;
+    });
   })));
 }
 
 function getEducations(connections, text) {
   return _.uniq(_.flatten(_.map(filterByEducation(connections,text), function(connection) {
     var match = _.select(connection.educations.values, function(education) {
-	  return contains(education.schoolName, text);
-	});
-	return _.map(match, function(education) {
-	  return education.schoolName;
-	});
+      return contains(education.schoolName, text);
+    });
+    return _.map(match, function(education) {
+      return education.schoolName;
+    });
   })));
 }
 
@@ -193,9 +231,9 @@ function filterByLocation(connections, text) {
 function filterByCompany(connections, text) {
   var filtered = _.select(connections, function(connection) {
     if (connection.threeCurrentPositions) {
-	  var companyMatches = _.select(connection.threeCurrentPositions.values, function(position) {
-	    return contains(position.company.name, text);
-	  });
+      var companyMatches = _.select(connection.threeCurrentPositions.values, function(position) {
+        return contains(position.company.name, text);
+      });
       return companyMatches.length > 0;
     }
     return false;
@@ -206,21 +244,23 @@ function filterByCompany(connections, text) {
 function filterByEducation(connections, text) {
   var filtered = _.select(connections, function(connection) {
     if (connection.educations) {
-	  var educationsMatched = _.select(connection.educations.values, function(education) {
-	    return contains(education.schoolName, text);
-	  });
-	  return educationsMatched.length > 0;
-	}
-	return false;
+      var educationsMatched = _.select(connection.educations.values, function(education) {
+        return contains(education.schoolName, text);
+      });
+      return educationsMatched.length > 0;
+    }
+    return false;
   });
   return filtered;
 }
 
 function contains(field, text) {
+  if (!text) return true;
+
   if (field) {
     field = field.toLowerCase();
     return field.indexOf(text.toLowerCase()) >= 0;
-  } 
+  }
   return false;
 }
 

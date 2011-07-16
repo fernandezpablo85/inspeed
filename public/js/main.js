@@ -74,12 +74,16 @@ function drawPeoplePane(people, text) {
 			   + "  <span class='industry'><%= person.industry %></span><br />"
                + "</div></li>";
   $.each(people, function(idx, person) {
-    if (!person.pictureUrl) {
-      person.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
+	
+	// Clone to avoid modifying the orginal object, so that changes only go to the template.
+	var personCopy = _.clone(person);
+    
+    if (!personCopy.pictureUrl) {
+      personCopy.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
     }
-    person.firstName = highlight(person.firstName, text);
-    person.lastName = highlight(person.lastName, text);
-    $('#peopleList').append( _.template(template, { person: person } ) );
+    personCopy.firstName = highlight(personCopy.firstName, text);
+    personCopy.lastName = highlight(personCopy.lastName, text);
+    $('#peopleList').append( _.template(template, { person: personCopy } ) );
   });
 }
 

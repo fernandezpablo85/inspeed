@@ -1,3 +1,15 @@
+/*******Globals*/
+
+// holds the logged user connections for fast in-memory access.
+window.connections = [];
+
+// holds the selected filters (undefined by default).
+window.filters = { 'industry'  : undefined,
+                   'education' : undefined,
+                   'company'   : undefined,
+                   'location'  : undefined }
+/***************/
+
 IN.Event.on(IN, 'systemReady', function() {
   if (IN.User.isAuthorized()) {
     _onAuth();
@@ -16,12 +28,30 @@ IN.Event.on(IN, 'systemReady', function() {
     }
   });
 
+  $('body').delegate('.filter li', 'click', function(event){
+    selectFilter(event.target);
+  });
+
   $(document).bind('input:changed', function(event, text) {
     onSearchInput(text);
   });
 });
 
-var connections = [];
+function selectFilter(element) {
+  var e = $(element);
+  // get the filter type.
+  var filter = e.closest('section').attr('id');
+
+  // add to global FILTERS variable.
+  window.filters[filter] = e.text();
+
+  // mark element as selected
+  e.closest('section').addClass('selected');
+  e.addClass('selected');
+
+  // clear input
+  $('#input').val('');
+}
 
 function _onAuth () {
   getConnections(_onConnectionsReady);

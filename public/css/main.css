@@ -40,6 +40,19 @@ section.filter li:hover {
   -webkit-transition: opacity .5s linear;
 }
 
+section.selected li {
+  display:none;
+}
+
+section.selected li.selected {
+  display:block;
+  opacity:1;
+}
+
+section.selected li.selected mark {
+  background-color:transparent;
+}
+
 #location ul li {
   background-color:#9AE69D;
 }

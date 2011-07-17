@@ -23,6 +23,17 @@ IN.Event.on(IN, 'systemReady', function() {
 
   $('#input').keyup(function(event) {
     // Ignore shift key (13) and do not fire if text.length is less than 2 characters.
+
+    if (event.keyCode == 13) {
+      if ($('#peopleList li').length == 1) {
+        $("#the-form").attr('action', $('#peopleList .profileLink')[0].href);
+        $("#the-form").attr('target', '_blank');
+        $('#the-form').submit();
+        $("#the-form").removeAttr('target');
+        $("#the-form").removeAttr('action');
+      }
+    }
+
     if (event.keyCode != 13 && this.value.length >= 2) {
       $(document).trigger('input:changed', [this.value]);
     }

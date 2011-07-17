@@ -151,7 +151,10 @@ function drawPeoplePane(people, text) {
     if (!personCopy.pictureUrl) {
       personCopy.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
     }
-    var memberKey = personCopy.siteStandardProfileRequest.url.match(/key=(\w*)[&\w*=\w*]*?/)[1];
+    var memberKey = "";
+    if (personCopy.siteStandardProfileRequest) {
+      memberKey = personCopy.siteStandardProfileRequest.url.match(/key=(\w*)[&\w*=\w*]*?/)[1];
+    }
     personCopy.memberKey = memberKey;
     if (text && text.length > 1) {
       personCopy.firstName = highlight(personCopy.firstName, text);

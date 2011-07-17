@@ -162,17 +162,24 @@ function onSearchInput(text) {
   drawPeoplePane(people, text);
 
   var industries = getIndustries(connections, text);
-  var mkup = createListItems(industries, text);
-  $($('#industry ul')[0]).html(mkup);
+  renderList(industries, text, 'industry');
+ 
   var locations = getLocations(connections, text);
-  mkup = createListItems(locations, text);
-  $($('#location ul')[0]).html(mkup);
+  renderList(locations, text, 'location');
+  
   var companies = getCompanies(connections, text);
-  mkup = createListItems(companies, text);
-  $($('#company ul')[0]).html(mkup);
+  renderList(companies, text, 'company');
+  
   var educations = getEducations(connections, text);
-  mkup = createListItems(educations, text);
-  $($('#education ul')[0]).html(mkup);
+  renderList(educations, text, 'education');
+}
+
+function renderList(collection, searchText, filterName) {
+  title = collection.length > 0 ? 'by ' + filterName + ':' : '';
+  $('#' + filterName + ' div').html(title);
+  
+  var mkup = createListItems(collection, searchText);
+  $('#' + filterName + ' ul').html(mkup);
 }
 
 function getPeople(connections, text) {

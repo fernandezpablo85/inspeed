@@ -46,6 +46,10 @@ section.selected li {
   display:none;
 }
 
+section.filter div {
+  padding: 20px 0px 0px 0px;
+}
+
 section.selected li.selected {
   display:block;
   opacity:1;

@@ -157,7 +157,6 @@ function drawPeoplePane(people, text) {
       personCopy.firstName = highlight(personCopy.firstName, text);
       personCopy.lastName = highlight(personCopy.lastName, text);
     }
-    console.debug("drawPeoplePane:", person.firstName, person.lastName, person);
     $('#peopleList').append( _.template(template, { person: personCopy } ) );
   });
 }

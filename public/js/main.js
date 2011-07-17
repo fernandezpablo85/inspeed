@@ -79,7 +79,11 @@ function getConnections(callback) {
 }
 
 function makeItem (item, text) {
-  return "<li>"+highlight(item, text)+"</li>";
+  if (item.indexOf("~") == 0) {
+    return "<li class='selected'>"+highlight(item.slice(1), text)+"</li>"; 
+  } else {
+    return "<li>"+highlight(item, text)+"</li>";  
+  }
 }
 
 function highlight (text, subtext) {
@@ -180,16 +184,19 @@ function matchLocation(location, filterValue) {
 }
 
 function getIndustries(connections, text) {
+  if (window.filters.industry) return ["~"+window.filters.industry];
   return _.uniq(_.pluck(filterByIndustry(connections,text),'industry'));
 }
 
 function getLocations(connections, text) {
+  if (window.filters.location) return ["~"+window.filters.location];
   return _.uniq(_.map(filterByLocation(connections,text), function(connection) {
     return connection.location.name;
   }));
 }
 
 function getCompanies(connections, text) {
+  if (window.filters.company) return ["~"+window.filters.company];
   return _.uniq(_.flatten(_.map(filterByCompany(connections,text), function(connection) {
     var match = _.select(connection.threeCurrentPositions.values, function(position) {
       return contains(position.company.name, text);
@@ -201,6 +208,7 @@ function getCompanies(connections, text) {
 }
 
 function getEducations(connections, text) {
+  if (window.filters.education) return ["~"+window.filters.education];  
   return _.uniq(_.flatten(_.map(filterByEducation(connections,text), function(connection) {
     var match = _.select(connection.educations.values, function(education) {
       return contains(education.schoolName, text);

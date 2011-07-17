@@ -44,6 +44,7 @@ IN.Event.on(IN, 'systemReady', function() {
   $('body').delegate('.filter li', 'click', function(event) {
     selectFilter(event.target);
     drawPeoplePane(getPeople(connections, ''));
+    $('#input').focus();
   });
 
   $(document).bind('input:changed', function(event, text) {

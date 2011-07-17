@@ -27,6 +27,7 @@ section.filter li {
   cursor:pointer;
   opacity:0.7;
   transition: opacity .5s linear;
+  -moz-transition: opacity .5s linear;
   -webkit-transition: opacity .5s linear;
 }
 
@@ -37,6 +38,7 @@ section.filter ul {
 section.filter li:hover {
   opacity:1;
   transition: opacity .5s linear;
+  -moz-transition: opacity .5s linear;
   -webkit-transition: opacity .5s linear;
 }
 
@@ -102,8 +104,37 @@ section.selected li.selected mark {
 
 .profileBox {
   border: 1px solid LightGray;
-  margin: 4px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin: 5px;
   min-height: 88px;
+  opacity: 0.7;
+  transition: opacity .7s linear;
+  -moz-transition: opacity .7s linear;
+  -webkit-transition: opacity .7s linear;
+}
+.profileBox:hover {
+  background-image: -moz-linear-gradient(right top,
+    rgb(231,238,240)  30%,
+    rgb(158,189,201)  71%,
+    rgb( 87,157,166) 100%
+  );
+  background-image: -webkit-gradient(linear, right top, left bottom,
+    color-stop(0.30, rgb(231,238,240)),
+    color-stop(0.71, rgb(158,189,201)),
+    color-stop(1.00, rgb( 87,157,166))
+  );
+  opacity: 1;
+  transition: .3s ease;
+  -moz-transition: .3s ease;
+  -webkit-transition: .3s ease;
+  -moz-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); 
+  -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); 
+}
+
+.profileBox .profileLink {
+  text-decoration: none;
 }
 .profileBox .profilePicture {
   width: 80px;
@@ -115,3 +146,21 @@ section.selected li.selected mark {
 .profileBox .firstName,.lastName {
   font-weight: bolder;
 }
+.profileBox .messageLink {
+  display: block;
+  float: right;
+  clear: right;
+  text-decoration: none;
+}
+.messageIcon {
+  display: block;
+  margin: 4px;
+  width: 32px;
+  height: 32px;
+  background: url('http://static01.linkedin.com/scds/common/u/img/sprite/sprite_inbox_v3_icon.png') no-repeat right -96px;
+  border: 0pt;
+}
+.messageIcon:hover {
+}
+
+

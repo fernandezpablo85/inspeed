@@ -69,7 +69,7 @@ function getConnections(callback) {
       callback();
     });
   } else {
-    var fs = ['location', 'firstName', 'lastName', 'industry', 'headline', 'pictureUrl', 'publicProfileUrl', 'threeCurrentPositions', 'educations'];
+    var fs = ['id', 'location', 'firstName', 'lastName', 'industry', 'headline', 'pictureUrl', 'publicProfileUrl', 'site-standard-profile-request', 'threeCurrentPositions', 'educations'];
     IN.API.Connections('me').fields(fs).result(function (data){
       window.connections = data.values;
       callback();
@@ -95,6 +95,7 @@ function drawPeoplePane(people, text) {
   console.log("drawPeoplePane("+people.length+" people)");
   $('#peopleList').empty();
   var template = "<li><div class='profileBox'>"
+		       + "  <a target='_blank' class='messageLink' href='http://www.linkedin.com/msgToConns?displayCreate=&connId=<%= person.memberKey %>'><span class='messageIcon'>&nbsp;</span></a>"
 			   + "  <a target='_blank' class='profileLink' href='<%= person.publicProfileUrl %>'>"
 			   + "    <span class='profilePicture'><img src='<%= person.pictureUrl %>'/></span>"
                + "    <span class='firstName'><%= person.firstName %></span>"
@@ -104,15 +105,16 @@ function drawPeoplePane(people, text) {
 			   + "  <span class='industry'><%= person.industry %></span><br />"
                + "</div></li>";
   $.each(people, function(idx, person) {
-	
 	// Clone to avoid modifying the orginal object, so that changes only go to the template.
 	var personCopy = _.clone(person);
-    
     if (!personCopy.pictureUrl) {
       personCopy.pictureUrl = 'http://static02.linkedin.com/scds/common/u/img/icon/icon_no_photo_80x80.png';
     }
+    var memberKey = personCopy.siteStandardProfileRequest.url.match(/key=(\w*)[&\w*=\w*]*?/)[1];
+    personCopy.memberKey = memberKey;
     personCopy.firstName = highlight(personCopy.firstName, text);
     personCopy.lastName = highlight(personCopy.lastName, text);
+    console.debug("drawPeoplePane:", person.firstName, person.lastName, person);
     $('#peopleList').append( _.template(template, { person: personCopy } ) );
   });
 }

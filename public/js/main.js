@@ -28,7 +28,7 @@ IN.Event.on(IN, 'systemReady', function() {
     }
   });
 
-  $('body').delegate('.filter li', 'click', function(event){
+  $('body').delegate('.filter li', 'click', function(event) {
     selectFilter(event.target);
     drawPeoplePane(getPeople(connections, ''));
   });
@@ -41,14 +41,17 @@ IN.Event.on(IN, 'systemReady', function() {
 function selectFilter(element) {
   var e = $(element);
   // get the filter type.
-  var filter = e.closest('section').attr('id');
+  var section = e.closest('section');
 
-  // add to global FILTERS variable.
-  window.filters[filter] = e.text();
-
-  // mark element as selected
-  e.closest('section').addClass('selected');
-  e.addClass('selected');
+  if (!section.hasClass('selected')) {
+    window.filters[section.attr('id')] = e.text();
+    section.addClass('selected');
+    e.addClass('selected');
+  } else {
+    window.filters[section.attr('id')] = undefined;
+    section.removeClass('selected');
+    e.removeClass('selected');
+  }
 
   // clear input
   $('#input').val('');

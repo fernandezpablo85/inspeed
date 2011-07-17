@@ -11,6 +11,8 @@ window.filters = { 'industry'  : undefined,
 /***************/
 
 IN.Event.on(IN, 'systemReady', function() {
+  startTextAnimation();
+  
   if (IN.User.isAuthorized()) {
     _onAuth();
   } else {
@@ -75,6 +77,24 @@ function _onAuth () {
 function _onConnectionsReady() {
   $('#input').attr('disabled', false).attr('placeholder', 'Search your network...');
   $('#li-login').hide();
+  stopTextAnimation();
+}
+
+function startTextAnimation() {
+  var dots = ['','.','..','...'];
+  var text = $('#input').attr('placeholder');
+  var i = 0;
+  function moveDots() {
+    $('#input').attr('placeholder', text + dots[i++]);
+    if (i == dots.length) {
+      i = 0;
+    }
+  };
+  window.dotTimer = window.setInterval(moveDots, 500);
+}
+
+function stopTextAnimation() {
+  window.clearInterval(window.dotTimer);
 }
 
 function getConnections(callback) {
@@ -285,4 +305,3 @@ function contains(field, text) {
   }
   return false;
 }
-

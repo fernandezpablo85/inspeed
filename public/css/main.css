@@ -37,9 +37,10 @@ section.filter ul {
 
 section.filter li:hover {
   opacity:1;
-  transition: opacity .5s linear;
-  -moz-transition: opacity .5s linear;
-  -webkit-transition: opacity .5s linear;
+  transition: opacity .5s linear, background-color .5s linear;
+  -moz-transition: opacity .5s linear,background-color .5s linear;
+  -webkit-transition: opacity .5s linear, background-color .5s linear;
+  background-color:yellow !important;
 }
 
 section.selected li {
@@ -53,6 +54,7 @@ section.filter div {
 section.selected li.selected {
   display:block;
   opacity:1;
+  background-color:yellow !important;
 }
 
 section.selected li.selected mark {

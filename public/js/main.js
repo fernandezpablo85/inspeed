@@ -11,14 +11,15 @@ window.filters = { 'industry'  : undefined,
 /***************/
 
 IN.Event.on(IN, 'systemReady', function() {
-  startTextAnimation();
   
   if (IN.User.isAuthorized()) {
+    startTextAnimation();
     _onAuth();
   } else {
     $('#input').attr('placeholder', 'You must login in order to use InSpeed');
     $('#li-login').show();
     $('#li-login').click(function () {
+      startTextAnimation();
       IN.User.authorize(_onAuth);
     });
   }
@@ -83,7 +84,7 @@ function _onConnectionsReady() {
 
 function startTextAnimation() {
   var dots = ['','.','..','...'];
-  var text = $('#input').attr('placeholder');
+  var text = 'Loading';
   var i = 0;
   function moveDots() {
     $('#input').attr('placeholder', text + dots[i++]);
